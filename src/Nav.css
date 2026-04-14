@@ -1,0 +1,15 @@
+.nav__content {
+    margin: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.contact__page a{
+    color : #2563eb;
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none;
+    
+}

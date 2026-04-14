@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
-import './App.css' // Import file CSS vào đây
+import './App.css' // Import file CSS
+import { Routes, Route, BrowserRouter, Link } from 'react-router-dom'
+import { Cart, About, Contact } from './Nav'
+import { GetMail, GetPhone, GetNote } from './Contact'
 
 // Tạo sẵn mảng 10 sản phẩm mẫu
 const allProducts = [
@@ -19,6 +22,8 @@ const allProducts = [
 
 function App() {
 
+  const [cartItems, setCartItems] = useState([])
+
   // Biến lưu số cột hiện tại (2 hoặc 3)
   const [columnCount, setColumnCount] = useState(3)
 
@@ -34,10 +39,9 @@ function App() {
   const [visibleCount, setVisibleCount] = useState(columnCount * 2)
 
   useEffect(() => {
-    updateColumnCount(); // Kiểm tra ngay khi web vừa load
-    window.addEventListener('resize', updateColumnCount); // Lắng nghe khi người dùng co giãn trình duyệt
-
-    return () => window.removeEventListener('resize', updateColumnCount); // Dọn dẹp bộ nhớ khi tắt web
+    updateColumnCount();
+    window.addEventListener('resize', updateColumnCount);
+    return () => window.removeEventListener('resize', updateColumnCount);
   }, [])
 
   const handleShowMore = () => {
@@ -45,9 +49,13 @@ function App() {
     setVisibleCount(prev => prev + columnCount);
   }
 
+  const addToCart = (product) => {
+    setCartItems(prev => [...prev, product])
+    alert(`Added ${product.name} to cart!`)
+  }
 
   return (
-    <>
+    <BrowserRouter>
       <header className="header">
         <div className="logo">
           <h1>e-commerce</h1>
@@ -55,39 +63,51 @@ function App() {
         </div>
         <nav className="nav-menu">
           <ul>
-            <li><a href="#products">Products</a></li>
-            <li><a href="#cart">Cart</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+            {/* Sử dụng thẻ Link để không bị reload trang */}
+            <li><Link to="/">Products</Link></li>
+            <li><Link to="/cart">Cart</Link></li>
+            <li><Link to="/about">About</Link></li>
+            <li><Link to="/contact">Contact</Link></li>
           </ul>
         </nav>
       </header>
 
-      <main className="main-content">
-        <h2 className="section-title">Featured Products</h2>
+      <Routes>
 
-        <div className="product-grid">
-          {/* Cắt mảng từ 0 đến visibleCount và in ra màn hình */}
-          {allProducts.slice(0, visibleCount).map((product) => (
-            <div key={product.id} className="product-item">
-              <div className="product-img-placeholder">Ảnh {product.id}</div>
-              <h3>{product.name}</h3>
-              <p className="desc">{product.desc}</p>
-              <p className="price">{product.price}</p>
-              <button className="btn-buy">Add to Cart</button>
+        <Route path="/" element={
+          <main className="main-content">
+            <h2 className="section-title">Featured Products</h2>
+            <div className="product-grid">
+              {allProducts.slice(0, visibleCount).map((product) => (
+                <div key={product.id} className="product-item">
+                  <div className="product-img-placeholder">Ảnh {product.id}</div>
+                  <h3>{product.name}</h3>
+                  <p className="desc">{product.desc}</p>
+                  <p className="price">{product.price}</p>
+                  <button className="btn-buy" onClick={() => addToCart(product)}>Add to Cart
+                  </button>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {/* Chỉ hiện nút "Show More" nếu số sản phẩm hiển thị nhỏ hơn tổng số sản phẩm */}
-        {visibleCount < allProducts.length && (
-          <div className="load-more-container">
-            <button className="btn-load-more" onClick={handleShowMore}>
-              Show More
-            </button>
-          </div>
-        )}
-      </main>
+            {visibleCount < allProducts.length && (
+              <div className="load-more-container">
+                <button className="btn-load-more" onClick={handleShowMore}>
+                  Show More
+                </button>
+              </div>
+            )}
+          </main>
+        } />
+
+        {/* Các trang khác */}
+        <Route path="/cart" element={<Cart cartItems={cartItems} />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/contact/email" element={<GetMail />} />
+        <Route path="/contact/phone" element={<GetPhone />} />
+        <Route path="/contact/note" element={<GetNote />} />
+      </Routes>
 
       <footer className="footer">
         <h2>Contact Me</h2>
@@ -96,7 +116,7 @@ function App() {
         <p>Phone: 0358749165</p>
         <p>Ai tên Nam thì đẹp trai</p>
       </footer>
-    </>
+    </BrowserRouter>
   )
 }
 
