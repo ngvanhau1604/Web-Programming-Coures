@@ -1,0 +1,33 @@
+@MyStoreApi_HostAddress = http://localhost:5146
+
+GET {{MyStoreApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+GET http://localhost:5146/api/product
+
+###
+
+POST http://localhost:5146/api/product
+Content-Type: application/json
+
+{
+  "name": "Laptop Dell",
+  "desc": "Laptop gaming mạnh mẽ",
+  "price": "15000000"
+}
+
+###
+
+PUT http://localhost:5146/api/product/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "Laptop Dell (Updated)",
+  "desc": "Laptop gaming mạnh mẽ",
+  "price": "16000000"
+}
+
+###
+
+DELETE http://localhost:5146/api/product/1
